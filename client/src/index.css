@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  html {
+    @apply font-sans text-slate-900 bg-cream-50;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply m-0 p-0;
+  }
+}
+
+/* BookCard */
+.book-card {
+  width: 160px;
+  min-height: 280px;
+  background: white;
+  border: 1px solid #e2e8f0; /* light gray */
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.5rem;
+}
+.book-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.15);
+}
+
+/* BookCover container inside BookCard */
+.book-cover-wrapper {
+  width: 140px;
+  height: 210px; /* 2:3 ratio */
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background-color: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BookCover image */
+.book-cover-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Control Buttons container */
+.book-card-controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Library grid */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 2rem 1.5rem;
+  justify-items: center;
+  align-items: start;
+  padding: 2rem 0;
+  background: linear-gradient(to bottom, #fefcf7, #ecfdf5);
+}
+
+/* Library page main container */
+.library-container {
+  background-color: #fffbf0; /* light cream */
+  color: #1e293b; /* slate-900 */
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* Book cover link */
+.book-cover-link {
+  width: 140px;
+  height: 210px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease;
+}
+.book-cover-link:hover {
+  transform: scale(1.05);
+}
+
+/* Buttons */
+.book-card-controls button {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.book-card-controls button.edit-btn {
+  background-color: #fef3c7; /* yellow-50 */
+  color: #b45309; /* yellow-700 */
+  border: 1px solid #fbbf24; /* yellow-400 */
+}
+.book-card-controls button.edit-btn:hover {
+  background-color: #fde68a; /* yellow-100 */
+}
+
+.book-card-controls button.delete-btn {
+  background-color: #ef4444; /* red-500 */
+  color: white;
+  border: none;
+}
+.book-card-controls button.delete-btn:hover {
+  background-color: #dc2626; /* red-600 */
+}
+
+.book-card-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Buttons variants */
+@layer components {
+  .btn-primary {
+    @apply bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border border-brown-600/20 text-slate-900 hover:bg-cream-50 px-6 py-3 rounded-lg font-medium transition-colors;
+  }
+
+  /* Form elements */
+  .input-field {
+    @apply w-full px-4 py-3 bg-cream-50 border border-brown-600/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent;
+  }
+
+  .textarea-field {
+    @apply w-full px-4 py-3 bg-cream-50 border border-brown-600/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent font-serif text-[15px] leading-relaxed resize-none;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-cream-100 rounded-lg border border-brown-600 shadow-sm;
+  }
+
+  .card-hover {
+    @apply bg-cream-100 rounded-lg border border-brown-600 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all;
+  }
+
+  /* Container */
+  .container-custom {
+    @apply container mx-auto px-4;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .line-clamp-2,
+  .line-clamp-3,
+  .line-clamp-4 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    -webkit-line-clamp: 2;
+  }
+  .line-clamp-3 {
+    -webkit-line-clamp: 3;
+  }
+  .line-clamp-4 {
+    -webkit-line-clamp: 4;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode CSS variables can be added here */
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-cream-50;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brown-600/20 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brown-600/30;
+}
