@@ -10,7 +10,8 @@ import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-const backendOrigin = 'http://localhost:5000';
+// Use environment variable or fallback to localhost for backend origin
+const backendOrigin = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const Reader = () => {
   const { id } = useParams();
@@ -51,7 +52,7 @@ const Reader = () => {
 
         setBook({ ...bookData, ebookUrl: fullUrl });
         setCurrentPage(1);
-      } catch (err) {
+      } catch {
         setError('Failed to load book data.');
       } finally {
         setLoading(false);
@@ -59,17 +60,17 @@ const Reader = () => {
     };
 
     loadBook();
-  }, [id, isAuthenticated, navigate]);
+  }, [id, isAuthenticated, navigate]); // Note: getBook removed from dependencies assuming memoized
 
+  // PDF load success handler
   const onDocumentLoadSuccess = ({ numPages }) => setNumPages(numPages);
 
-  const onItemClick = useCallback(
-    ({ pageNumber }) => {
-      if (pageNumber) setCurrentPage(pageNumber);
-    },
-    []
-  );
+  // Clicking on bookmarks or links inside PDF (optional)
+  const onItemClick = useCallback(({ pageNumber }) => {
+    if (pageNumber) setCurrentPage(pageNumber);
+  }, []);
 
+  // Page navigation with boundary checks
   const changePage = useCallback(
     (offset) => {
       setCurrentPage((prev) => {
@@ -89,9 +90,11 @@ const Reader = () => {
     setCurrentPage(val);
   };
 
+  // Zoom controls
   const zoomIn = () => setScale((s) => Math.min(3, s + 0.2));
   const zoomOut = () => setScale((s) => Math.max(0.5, s - 0.2));
 
+  // Fullscreen toggle
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen();
@@ -102,6 +105,7 @@ const Reader = () => {
     }
   };
 
+  // Keyboard shortcuts for page navigation
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key === 'ArrowLeft') changePage(-1);
