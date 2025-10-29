@@ -40,7 +40,23 @@ app.use(cors({
 }));
 
 // Serve static files from uploads folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', (req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  const filePath = path.join(__dirname, 'uploads', req.url);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error serving file:', err);
+      res.status(err.status || 500).send('Internal Server Error');
+    }
+  });
+});
+
 
 // JSON and URL-encoded parser limits
 app.use(express.json({ limit: '50mb' }));
