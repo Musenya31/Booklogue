@@ -22,41 +22,34 @@ connectDB();
 // Allowed origins for CORS
 const allowedOrigins = [
   'https://booklogue-5.onrender.com', // your deployed frontend URL
-  'http://localhost:5173' // for local testing
+  'http://localhost:5173' // local testing
 ];
 
-// CORS middleware
+// Global CORS middleware for API routes and others
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin like Postman or curl
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // allow non-browser clients
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
 }));
 
-// Serve static files from uploads folder
-app.use('/uploads', (req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  const filePath = path.join(__dirname, 'uploads', req.url);
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error('Error serving file:', err);
-      res.status(err.status || 500).send('Internal Server Error');
+// Serve static files from uploads folder with CORS handled by middleware
+app.use('/uploads', cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS on uploads'));
     }
-  });
-});
-
+  },
+  credentials: true,
+}), express.static(path.join(__dirname, 'uploads')));
 
 // JSON and URL-encoded parser limits
 app.use(express.json({ limit: '50mb' }));
@@ -69,12 +62,12 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// Health check route
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
     message: 'BookLogue API is running!',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 

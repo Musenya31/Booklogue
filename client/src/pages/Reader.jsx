@@ -31,6 +31,7 @@ const Reader = () => {
       navigate('/login');
       return;
     }
+
     const loadBook = async () => {
       try {
         setLoading(true);
@@ -38,23 +39,27 @@ const Reader = () => {
 
         if (!bookData?.ebookUrl) {
           setError('No eBook URL found for this book.');
+          setLoading(false);
           return;
         }
 
-        bookData.ebookUrl = bookData.ebookUrl.startsWith('http')
+        const fullUrl = bookData.ebookUrl.startsWith('http')
           ? bookData.ebookUrl
           : `${backendOrigin}${bookData.ebookUrl}`;
 
-        setBook(bookData);
+        console.log('Loading PDF from:', fullUrl);
+
+        setBook({ ...bookData, ebookUrl: fullUrl });
         setCurrentPage(1);
-      } catch {
+      } catch (err) {
         setError('Failed to load book data.');
       } finally {
         setLoading(false);
       }
     };
+
     loadBook();
-  }, [id, isAuthenticated, navigate, getBook]);
+  }, [id, isAuthenticated, navigate]);
 
   const onDocumentLoadSuccess = ({ numPages }) => setNumPages(numPages);
 
@@ -62,7 +67,7 @@ const Reader = () => {
     ({ pageNumber }) => {
       if (pageNumber) setCurrentPage(pageNumber);
     },
-    [setCurrentPage]
+    []
   );
 
   const changePage = useCallback(
@@ -84,13 +89,8 @@ const Reader = () => {
     setCurrentPage(val);
   };
 
-  const zoomIn = () => {
-    setScale((s) => Math.min(3, s + 0.2));
-  };
-
-  const zoomOut = () => {
-    setScale((s) => Math.max(0.5, s - 0.2));
-  };
+  const zoomIn = () => setScale((s) => Math.min(3, s + 0.2));
+  const zoomOut = () => setScale((s) => Math.max(0.5, s - 0.2));
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -126,13 +126,9 @@ const Reader = () => {
 
       <div className="flex items-center justify-between mb-4 space-x-4">
         <div>
-          <button onClick={zoomOut} className="btn-secondary mr-2">
-            -
-          </button>
+          <button onClick={zoomOut} className="btn-secondary mr-2">-</button>
           <span className="text-lg font-semibold">{Math.round(scale * 100)}%</span>
-          <button onClick={zoomIn} className="btn-secondary ml-2">
-            +
-          </button>
+          <button onClick={zoomIn} className="btn-secondary ml-2">+</button>
         </div>
 
         <div>
@@ -174,7 +170,9 @@ const Reader = () => {
           disabled={currentPage <= 1}
           onClick={() => changePage(-1)}
           className={`px-4 py-2 rounded border border-teal-500 font-semibold ${
-            currentPage <= 1 ? 'text-gray-300 border-gray-300 cursor-not-allowed' : 'text-teal-600 hover:bg-teal-100'
+            currentPage <= 1
+              ? 'text-gray-300 border-gray-300 cursor-not-allowed'
+              : 'text-teal-600 hover:bg-teal-100'
           }`}
           aria-label="Previous page"
         >
@@ -189,7 +187,9 @@ const Reader = () => {
           disabled={currentPage >= numPages}
           onClick={() => changePage(1)}
           className={`px-4 py-2 rounded border border-teal-500 font-semibold ${
-            currentPage >= numPages ? 'text-gray-300 border-gray-300 cursor-not-allowed' : 'text-teal-600 hover:bg-teal-100'
+            currentPage >= numPages
+              ? 'text-gray-300 border-gray-300 cursor-not-allowed'
+              : 'text-teal-600 hover:bg-teal-100'
           }`}
           aria-label="Next page"
         >
