@@ -21,7 +21,7 @@ connectDB();
 
 // Allowed origins for CORS
 const allowedOrigins = [
-  'https://booklogue-3.onrender.com', // your deployed frontend URL
+  'https://booklogue-5.onrender.com', // your deployed frontend URL
   'http://localhost:5173' // for local testing
 ];
 
