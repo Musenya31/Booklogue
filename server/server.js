@@ -19,16 +19,30 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Enable CORS for frontend origin
+// Allowed origins for CORS
+const allowedOrigins = [
+  'https://booklogue-3.onrender.com', // your deployed frontend URL
+  'http://localhost:5173' // for local testing
+];
+
+// CORS middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // allow requests with no origin like Postman or curl
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
 // Serve static files from uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Set JSON and URL-encoded limits (for uploads/base64 data)
+// JSON and URL-encoded parser limits
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
