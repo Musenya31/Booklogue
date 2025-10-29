@@ -20,8 +20,8 @@ const app = express();
 connectDB();
 
 const allowedOrigins = [
-  'https://booklogue-6.onrender.com', // your deployed frontend URL
-  'http://localhost:5173' // local testing
+  'https://booklogue-7.onrender.com', // your deployed frontend URL
+
 ];
 
 // Global CORS middleware (applies to all routes)
