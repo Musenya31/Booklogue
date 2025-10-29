@@ -7,15 +7,14 @@ export const userService = {
   updateReadingProgress: (bookId, progressData) =>
     API.post(`/api/users/library/${bookId}`, progressData),
   uploadFile: (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    const token = localStorage.getItem('token');
-    return 
-    API.post('/api/upload', formData, {
-  headers: {
-    'Content-Type': 'multipart/form-data',
-    Authorization: `Bearer ${token}`,
-  },
-});
-  },
+  const formData = new FormData();
+  formData.append('file', file);
+  const token = localStorage.getItem('token');
+  return API.post('/api/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+},
 };
