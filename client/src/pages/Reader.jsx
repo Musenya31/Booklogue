@@ -3,15 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { useAuth } from '../hooks/useAuth';
 import { useBooks } from '../hooks/useBooks';
+import { getBaseUrl } from '../config/api'; // Import helper
 
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
-
-// Use environment variable or fallback to localhost for backend origin
-const backendOrigin = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
 const Reader = () => {
   const { id } = useParams();
@@ -44,15 +42,18 @@ const Reader = () => {
           return;
         }
 
+        // Use getBaseUrl() helper instead of hardcoded URL
+        const backendUrl = getBaseUrl();
         const fullUrl = bookData.ebookUrl.startsWith('http')
           ? bookData.ebookUrl
-          : `${backendOrigin}${bookData.ebookUrl}`;
+          : `${backendUrl}${bookData.ebookUrl}`;
 
         console.log('Loading PDF from:', fullUrl);
 
         setBook({ ...bookData, ebookUrl: fullUrl });
         setCurrentPage(1);
-      } catch {
+      } catch (err) {
+        console.error('Error loading book:', err);
         setError('Failed to load book data.');
       } finally {
         setLoading(false);
@@ -60,7 +61,7 @@ const Reader = () => {
     };
 
     loadBook();
-  }, [id, isAuthenticated, navigate]); // Note: getBook removed from dependencies assuming memoized
+  }, [id, isAuthenticated, navigate, getBook]);
 
   // PDF load success handler
   const onDocumentLoadSuccess = ({ numPages }) => setNumPages(numPages);

@@ -1,11 +1,10 @@
-// src/config/api.js or src/utils/api.js
 import axios from 'axios';
 
 // Base URL without /api suffix
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const API = axios.create({
-  baseURL: `${BASE_URL}api`, // Add /api here for API routes
+  baseURL: `${BASE_URL}/api`, // Fixed: Added slash before 'api'
   headers: {
     'Content-Type': 'application/json',
   },

@@ -19,37 +19,34 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
+// CORS configuration - Fixed origins
 const allowedOrigins = [
-  'https://localhost:5173',
-  'https://booklogue-7.onrender.com', // your deployed frontend URL
-
+  'http://localhost:5173',          // Local development (http, not https)
+  'https://booklogue-7.onrender.com' // Your deployed frontend
 ];
 
-// Global CORS middleware (applies to all routes)
-app.use(cors({
+// Simplified CORS configuration
+const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // Allow non-browser tools (Postman etc)
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('Blocked by CORS:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
-}));
+  optionsSuccessStatus: 200
+};
 
-// Serve static files from uploads folder with CORS enabled
-app.use('/uploads', cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS on uploads'));
-    }
-  },
-  credentials: true,
-}), express.static(path.join(__dirname, 'uploads')));
+// Apply CORS globally
+app.use(cors(corsOptions));
+
+// Serve static files from uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // JSON and URL-encoded parsers with limits
 app.use(express.json({ limit: '50mb' }));
@@ -68,6 +65,15 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     message: 'BookLogue API is running!',
     timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV
+  });
+});
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.originalUrl} not found`
   });
 });
 
@@ -76,6 +82,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🌐 Allowed origins:`, allowedOrigins);
 });
