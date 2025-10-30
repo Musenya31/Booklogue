@@ -180,7 +180,7 @@ const UploadBook = () => {
       try {
         const fileForm = new FormData();
         fileForm.append('file', ebookFile);
-       const uploadRes = await API.post('/api/upload', fileForm, {
+       const uploadRes = await API.post('/upload', fileForm, {
   headers: { 'Content-Type': 'multipart/form-data' },
 });
  const ebookUrl = uploadRes.data.url;
