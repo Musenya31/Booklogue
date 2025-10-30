@@ -1,8 +1,11 @@
-
+// src/config/api.js or src/utils/api.js
 import axios from 'axios';
 
+// Base URL without /api suffix
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: `${BASE_URL}/api`, // Add /api here for API routes
   headers: {
     'Content-Type': 'application/json',
   },
@@ -32,5 +35,13 @@ API.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Helper function to get PDF/upload URLs (bypasses /api prefix)
+export const getUploadUrl = (filename) => {
+  return `${BASE_URL}/uploads/${filename}`;
+};
+
+// Helper to get base URL
+export const getBaseUrl = () => BASE_URL;
 
 export default API;
