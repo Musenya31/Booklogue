@@ -37,7 +37,7 @@ API.interceptors.response.use(
 
 // Helper function to get PDF/upload URLs (bypasses /api prefix)
 export const getUploadUrl = (filename) => {
-  return `${BASE_URL}/uploads/${filename}`;
+  return `${BASE_URL}uploads/${filename}`;
 };
 
 // Helper to get base URL
