@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-// Base URL without /api suffix
+// Base URL without trailing slash
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const API = axios.create({
-  baseURL: `${BASE_URL}api`, // Fixed: Added slash before 'api'
+  baseURL: `${BASE_URL}api`, // ✅ Fixed: Added slash before 'api'
   headers: {
     'Content-Type': 'application/json',
   },
@@ -37,10 +37,13 @@ API.interceptors.response.use(
 
 // Helper function to get PDF/upload URLs (bypasses /api prefix)
 export const getUploadUrl = (filename) => {
-  return `${BASE_URL}uploads/${filename}`;
+  // Remove leading slash if present
+  const cleanFilename = filename.startsWith('/') ? filename.slice(1) : filename;
+  return `${BASE_URL}/${cleanFilename}`;
 };
 
-// Helper to get base URL
-export const getBaseUrl = () => BASE_URL;
+// Helper to get base URL without trailing slash
+export const getBaseUrl = () => BASE_URL.replace(/\/$/, ''); // Remove trailing slash if exists
 
 export default API;
+
