@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { useAuth } from '../hooks/useAuth';
 import { useBooks } from '../hooks/useBooks';
-import { getBaseUrl } from '../config/api'; // Import helper
+import { getBaseUrl } from '../services/api'; // Import helper
 
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
